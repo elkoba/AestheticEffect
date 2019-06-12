@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shpere : MonoBehaviour
+public class Sphere : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()

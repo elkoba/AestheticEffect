@@ -62,7 +62,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Behaviours\Edge.cs" />
     <Compile Include="Assets\Scripts\Behaviours\Node.cs" />
-    <Compile Include="Assets\Scripts\Behaviours\Shpere.cs" />
+    <Compile Include="Assets\Scripts\Behaviours\Sphere.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/danie/Documents/Git/AestheticEffect/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
@@ -272,6 +272,9 @@
     </Reference>
     <Reference Include="UnityEngine.Networking">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.3.14f1/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+    </Reference>
+    <Reference Include="Vuforia.UnityExtensions">
+      <HintPath>C:/Program Files/Unity/Hub/Editor/2018.3.14f1/Editor/Data/PlaybackEngines/VuforiaSupport/Managed/Runtime/Vuforia.UnityExtensions.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.GoogleAudioSpatializer">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.3.14f1/Editor/Data/UnityExtensions/Unity/UnityGoogleAudioSpatializer/RuntimeEditor/UnityEngine.GoogleAudioSpatializer.dll</HintPath>
