@@ -116,7 +116,7 @@ MonoBehaviour:
   m_MinSize: {x: 917, y: 448}
   m_MaxSize: {x: 22012, y: 10024}
   vertical: 0
-  controlID: 1071
+  controlID: 12
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_MinSize: {x: 202, y: 448}
   m_MaxSize: {x: 4002, y: 8048}
   vertical: 1
-  controlID: 1072
+  controlID: 108
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -188,8 +188,8 @@ MonoBehaviour:
     y: 649
     width: 907
     height: 298
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 224}
+  m_MaxSize: {x: 4002, y: 4024}
   m_ActualView: {fileID: 12}
   m_Panes:
   - {fileID: 12}
@@ -415,13 +415,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.2520496, y: -0.5120844, z: 0.16025244, w: 0.8053321}
+    m_Target: {x: -0.25658593, y: -0.18138051, z: 0.04910717, w: -0.9480788}
     speed: 2
-    m_Value: {x: 0.2520496, y: -0.5120844, z: 0.16025244, w: 0.8053321}
+    m_Value: {x: -0.25658593, y: -0.18138051, z: 0.04910717, w: -0.9480788}
   m_Size:
-    m_Target: 34.152462
+    m_Target: 32.66288
     speed: 2
-    m_Value: 34.152462
+    m_Value: 32.66288
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -488,9 +488,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 925cffff
-      m_LastClickedID: -41838
-      m_ExpandedIDs: c85cffffcc5cffff2aaaffff32aaffffdebdffffe2bdffffe6bdffff64d0ffff68d0ffff6cd0ffff12e5ffff16e5ffff1ae5ffffeaf1ffffd6fbffff
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 1ef3ffff22f3ffffd6fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -552,20 +552,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs/Icosahedron
+    - Assets/Models/Sphere
   m_ViewMode: 1
   m_StartGridSize: 78
   m_LastFolders:
-  - Assets/Prefabs/Icosahedron
+  - Assets/Models/Sphere
   m_LastFoldersGridSize: 78
-  m_LastProjectPath: C:\Users\danie\Documents\Git\AestehticEffect
+  m_LastProjectPath: C:\Users\danie\Documents\Git\AestheticEffect
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: ba2e0000
-    m_LastClickedID: 11962
-    m_ExpandedIDs: 0000000008260000ae260000da260000bc2e000000ca9a3b
+    m_SelectedIDs: 30260000
+    m_LastClickedID: 9776
+    m_ExpandedIDs: 00000000102600007c260000b6260000e22600002a28000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -593,7 +593,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 0000000008260000ae260000da26000000ca9a3b
+    m_ExpandedIDs: 0000000010260000b6260000e22600002a280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -620,7 +620,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 70250000ea460000
     m_RenameOverlay:
       m_UserAcceptedRename: 0

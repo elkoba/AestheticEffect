@@ -28,7 +28,7 @@ public class SphereMeshGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("MeshGenerator/Sphere Mesh Generator")]
+    [MenuItem("Mesh Generator/Sphere Mesh Generator")]
     public static void ShowMenu()
     {
         SphereMeshGenerator window = EditorWindow.GetWindow<SphereMeshGenerator>("Shpere Window");
@@ -40,11 +40,13 @@ public class SphereMeshGenerator : EditorWindow
     {
         // Receive the name the user wants for the sphere mesh
         EditorGUILayout.Separator();
+        GUILayout.Label("Name of the mesh", EditorStyles.boldLabel);
         _name = EditorGUILayout.TextField("Mesh name", _name);
 
         // Get the data for the sphere creation
         EditorGUILayout.Separator();
-        _radius = EditorGUILayout.Slider("Radius", _radius, 1.0f, 15.0f);
+        GUILayout.Label("Mesh info", EditorStyles.boldLabel);
+        _radius = EditorGUILayout.Slider("Radius", _radius, 0.15f, 15.0f);
         _longitudes = EditorGUILayout.IntSlider("Meridians", _longitudes, 16, 128);
         _latitudes = EditorGUILayout.IntSlider("Parallels", _latitudes, 12, 64);
 

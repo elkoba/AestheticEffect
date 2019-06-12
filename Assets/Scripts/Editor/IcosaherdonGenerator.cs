@@ -1,10 +1,9 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-public class IcosahedronPrefabGenerator : EditorWindow
+public class IcosahedronGenerator : EditorWindow
 {
     #region Public Attributes
     public const string assetsFolder = "Assets/Prefabs/Icosahedron";
@@ -32,10 +31,10 @@ public class IcosahedronPrefabGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("PrefabGenerator/Icosahedron Prefab Generator")]
+    [MenuItem("Prefab Generator/Icosahedron Prefab Generator")]
     public static void ShowMenu()
     {
-        IcosahedronPrefabGenerator window = EditorWindow.GetWindow<IcosahedronPrefabGenerator>("Icosahedron Generator");
+        IcosahedronGenerator window = EditorWindow.GetWindow<IcosahedronGenerator>("Icosahedron Generator");
         window.minSize = new Vector2(250.0f, 100.0f);
         window.Show();
     }
@@ -43,16 +42,20 @@ public class IcosahedronPrefabGenerator : EditorWindow
     private void OnGUI()
     {
         EditorGUILayout.Separator();
-        _name = EditorGUILayout.TextField("Prefab Name", _name);
+        GUILayout.Label("Name of your Object", EditorStyles.boldLabel);
+        _name = EditorGUILayout.TextField("Icosahedron Name", _name);
 
         EditorGUILayout.Separator();
-        _radius = EditorGUILayout.Slider("Icosahedron Radius", _radius, 13.0f, 15.0f);
+        GUILayout.Label("Object info", EditorStyles.boldLabel);
+        _radius = EditorGUILayout.Slider("Icosahedron Radius", _radius, 10.0f, 20.0f);
 
         EditorGUILayout.Separator();
+        GUILayout.Label("Meshes for the Object", EditorStyles.boldLabel);
         _nodeMesh = EditorGUILayout.ObjectField(string.Format("Node Mesh"), _nodeMesh, typeof(Mesh), false) as Mesh;
         _edgeMesh = EditorGUILayout.ObjectField(string.Format("Edge Mesh"), _edgeMesh, typeof(Mesh), false) as Mesh;
 
         EditorGUILayout.Separator();
+        GUILayout.Label("Materials for the Object", EditorStyles.boldLabel);
         _icosahedronMaterial = EditorGUILayout.ObjectField(string.Format("Icosahedron Material"), _icosahedronMaterial, typeof(Material), false) as Material;
 
         EditorGUILayout.Separator();
@@ -60,7 +63,7 @@ public class IcosahedronPrefabGenerator : EditorWindow
         {
             if (CreateIcosahedron())
             {
-                Debug.Log("You successfully created am icosahedron of radius " + _radius + "!");
+                Debug.Log("You successfully created an icosahedron of radius " + _radius + "!");
             }
             else
             {

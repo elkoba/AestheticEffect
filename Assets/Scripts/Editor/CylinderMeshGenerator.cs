@@ -33,7 +33,7 @@ public class CylinderMeshGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("MeshGenerator/Cylinder Mesh Generator")]
+    [MenuItem("Mesh Generator/Cylinder Mesh Generator")]
     public static void ShowMenu()
     {
         CylinderMeshGenerator window = EditorWindow.GetWindow<CylinderMeshGenerator>("Cylinder Window");
@@ -45,10 +45,12 @@ public class CylinderMeshGenerator : EditorWindow
     {
         // Receive the name the user wants for the cylinder mesh
         EditorGUILayout.Separator();
+        GUILayout.Label("Name of the mesh", EditorStyles.boldLabel);
         _name = EditorGUILayout.TextField("Mesh Name", _name);
 
         // Get the data for the cylinder creation
         EditorGUILayout.Separator();
+        GUILayout.Label("Mesh info", EditorStyles.boldLabel);
         _divisions = EditorGUILayout.IntSlider("Radial Divisions", _divisions, 16, 48);
         _radius = EditorGUILayout.Slider("Radius", _radius, 0.15f, 0.75f);
 
