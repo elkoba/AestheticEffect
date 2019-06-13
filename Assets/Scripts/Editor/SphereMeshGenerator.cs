@@ -17,6 +17,7 @@ public class SphereMeshGenerator : EditorWindow
     private Mesh _mesh;
     private Vector3[] _vertices;
     private Vector3[] _normals;
+    private Vector2[] _uvs;
     private int[] _triangles;
     #endregion
 
@@ -28,7 +29,7 @@ public class SphereMeshGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("Mesh Generator/Sphere Mesh Generator")]
+    [MenuItem("Mesh Generator/Sphere")]
     public static void ShowMenu()
     {
         SphereMeshGenerator window = EditorWindow.GetWindow<SphereMeshGenerator>("Shpere Window");
@@ -114,6 +115,21 @@ public class SphereMeshGenerator : EditorWindow
             }
             #endregion
 
+            #region UVs
+            _uvs = new Vector2[_vertices.Length];
+            _uvs[0] = Vector2.up;
+            _uvs[_uvs.Length - 1] = Vector2.zero;
+
+            for (int lat = 0; lat < _latitudes; lat++)
+            {
+                for (int lon = 0; lon <= _longitudes; lon++)
+                {
+                    _uvs[lon + lat * (_longitudes + 1) + 1] = new Vector2((float)lon / _longitudes, 1f - (float)(lat + 1) / (_latitudes + 1));
+                }
+            }
+                
+            #endregion
+
             #region Triangles
             int totalFaces = _vertices.Length;
             int totalTriangles = totalFaces * 2;
@@ -162,6 +178,7 @@ public class SphereMeshGenerator : EditorWindow
 
             _mesh.vertices = _vertices;
             _mesh.normals = _normals;
+            _mesh.uv = _uvs;
             _mesh.triangles = _triangles;
             #endregion
 

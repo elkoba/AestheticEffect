@@ -33,7 +33,7 @@ public class FancySphereGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("Prefab Generator/Fancy Sphere Prefab Generator")]
+    [MenuItem("Complex Object Generator/Fancy Sphere")]
     private static void ShowMenu()
     {
         FancySphereGenerator window = EditorWindow.GetWindow<FancySphereGenerator>("Fancy Sphere Generator");
@@ -61,7 +61,6 @@ public class FancySphereGenerator : EditorWindow
         GUILayout.Label("Materials for the Object", EditorStyles.boldLabel);
         _bigSphereMaterial = EditorGUILayout.ObjectField(string.Format("Main Sphere Material"), _bigSphereMaterial, typeof(Material), false) as Material;
         _wiredSphereMaterial = EditorGUILayout.ObjectField(string.Format("Wired Sphere Material"), _wiredSphereMaterial, typeof(Material), false) as Material;
-
         EditorGUILayout.Separator();
         _totalMiniSphereMaterials = EditorGUILayout.IntSlider("Mini Sphere Materials", _totalMiniSphereMaterials, 1, 10);
         for (int i = 0; i < _totalMiniSphereMaterials; i++) 
@@ -173,14 +172,6 @@ public class FancySphereGenerator : EditorWindow
 
         _ts.Index = randomVertex;
         _ts.Vertex = bigSphereMesh.vertices[randomVertex];
-
-        /*Vector3 newPosition = new Vector3();
-        float phi = Random.Range(-Mathf.PI, Mathf.PI);
-        float theta = Random.Range(-Mathf.PI, Mathf.PI);
-
-        newPosition = new Vector3(Mathf.Sin(phi) * Mathf.Cos(theta), Mathf.Cos(phi), Mathf.Sin(phi) * Mathf.Sin(theta)) * _radius;
-
-        return newPosition;*/
     }
 
     /// <summary>
@@ -194,6 +185,7 @@ public class FancySphereGenerator : EditorWindow
         // Add the proper components
         MeshFilter mf = wiredSphere.AddComponent<MeshFilter>();
         MeshRenderer mr = wiredSphere.AddComponent<MeshRenderer>();
+        WiredSphere ws = wiredSphere.AddComponent<WiredSphere>();
 
         // Add the proper mesh and material
         mf.mesh = _mainSphereMesh;

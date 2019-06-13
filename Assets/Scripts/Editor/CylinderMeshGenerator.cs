@@ -33,7 +33,7 @@ public class CylinderMeshGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("Mesh Generator/Cylinder Mesh Generator")]
+    [MenuItem("Mesh Generator/Cylinder")]
     public static void ShowMenu()
     {
         CylinderMeshGenerator window = EditorWindow.GetWindow<CylinderMeshGenerator>("Cylinder Window");

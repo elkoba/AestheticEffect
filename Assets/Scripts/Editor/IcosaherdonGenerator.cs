@@ -31,7 +31,7 @@ public class IcosahedronGenerator : EditorWindow
     #endregion
 
     #region Editor
-    [MenuItem("Prefab Generator/Icosahedron Prefab Generator")]
+    [MenuItem("Complex Object Generator/Icosahedron")]
     public static void ShowMenu()
     {
         IcosahedronGenerator window = EditorWindow.GetWindow<IcosahedronGenerator>("Icosahedron Generator");
