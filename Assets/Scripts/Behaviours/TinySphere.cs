@@ -31,6 +31,5 @@ public class TinySphere : MonoBehaviour
 
     void Update()
     {
-        transform.position = vertex;
     }
 }

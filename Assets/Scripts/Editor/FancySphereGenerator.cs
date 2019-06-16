@@ -113,7 +113,7 @@ public class FancySphereGenerator : EditorWindow
             mini.transform.parent = fancy.transform;
 
             // Give the parent the proper component
-            FancySphere sph = fancy.AddComponent<FancySphere>();
+            RandomSpin sph = fancy.AddComponent<RandomSpin>();
 
             // Set each part of the fancy sphere
             SetBigSphere();

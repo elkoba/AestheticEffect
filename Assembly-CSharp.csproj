@@ -61,8 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Behaviours\Edge.cs" />
-    <Compile Include="Assets\Scripts\Behaviours\FancySphere.cs" />
     <Compile Include="Assets\Scripts\Behaviours\Node.cs" />
+    <Compile Include="Assets\Scripts\Behaviours\RandomSpin.cs" />
     <Compile Include="Assets\Scripts\Behaviours\TinySphere.cs" />
     <Compile Include="Assets\Scripts\Behaviours\WiredSphere.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">

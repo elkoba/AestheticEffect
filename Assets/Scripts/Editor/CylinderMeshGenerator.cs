@@ -52,7 +52,7 @@ public class CylinderMeshGenerator : EditorWindow
         EditorGUILayout.Separator();
         GUILayout.Label("Mesh info", EditorStyles.boldLabel);
         _divisions = EditorGUILayout.IntSlider("Radial Divisions", _divisions, 16, 48);
-        _radius = EditorGUILayout.Slider("Radius", _radius, 0.15f, 0.75f);
+        _radius = EditorGUILayout.Slider("Radius", _radius, 0.015f, 0.5f);
 
         EditorGUILayout.Separator();
         if (GUILayout.Button("Generate Cylinder"))
