@@ -114,6 +114,7 @@ public class FancySphereGenerator : EditorWindow
 
             // Give the parent the proper component
             RandomSpin sph = fancy.AddComponent<RandomSpin>();
+            Bulges bulges = fancy.AddComponent<Bulges>();
 
             // Set each part of the fancy sphere
             SetBigSphere();

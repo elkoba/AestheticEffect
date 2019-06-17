@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Behaviours\Bulges.cs" />
     <Compile Include="Assets\Scripts\Behaviours\Edge.cs" />
     <Compile Include="Assets\Scripts\Behaviours\Node.cs" />
     <Compile Include="Assets\Scripts\Behaviours\RandomSpin.cs" />

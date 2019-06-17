@@ -26,7 +26,6 @@ public class TinySphere : MonoBehaviour
 
     void Awake()
     {
-        transform.position = vertex;
     }
 
     void Update()
