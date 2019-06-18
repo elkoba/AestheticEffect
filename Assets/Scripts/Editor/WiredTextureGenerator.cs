@@ -11,8 +11,8 @@ public class WiredTextureGenerator : EditorWindow
 
     #region Private Attributes
     private static string _name = "Wired_Texture";
-    private static int _width = 500;
-    private static int _height = 500;
+    private static int _width = 512;
+    private static int _height = 512;
     private static int _totalWires = 20;
     private static int _wireThickness = 3;
     private static Color _wireColor = new Color(1.0f, 1.0f, 1.0f);
@@ -48,16 +48,17 @@ public class WiredTextureGenerator : EditorWindow
         _name = EditorGUILayout.TextField("Wired Texture Name", _name);
 
         EditorGUILayout.Separator();
-        GUILayout.Label("Texture info", EditorStyles.boldLabel);
+        GUILayout.Label("Texture Info", EditorStyles.boldLabel);
         _width = EditorGUILayout.IntField("Texture Width", _width);
         _height = EditorGUILayout.IntField("Texture Heigth", _height);
+
         EditorGUILayout.Separator();
         GUILayout.Label("Wires");
         _totalWires = EditorGUILayout.IntSlider("Total Wires", _totalWires, 1, 100);
-        _wireThickness = EditorGUILayout.IntSlider("Wire Thickness (px)", _wireThickness, 1, 20);
+        _wireThickness = EditorGUILayout.IntSlider("Wire Thickness (px)", _wireThickness, 1, 256);
         _wireColor = EditorGUILayout.ColorField("Wire color", _wireColor);
 
-        if (GUILayout.Button("Generate Fancy Sphere"))
+        if (GUILayout.Button("Generate Wired Texture"))
         {
             if (CreateWiredTexture())
             {
@@ -98,6 +99,7 @@ public class WiredTextureGenerator : EditorWindow
         catch (Exception e)
         {
             Debug.LogWarningFormat("The Wire Texture could not be successfully generated. Here is why: {0}", e.ToString());
+            created = false;
         }
 
         return created;
@@ -111,7 +113,7 @@ public class WiredTextureGenerator : EditorWindow
     /// </returns>
     private static bool SaveTexture()
     {
-        bool ok = true;
+        bool saved = true;
         string path = Path.Combine(assetsFolder, _name + ".png");
 
         try
@@ -135,10 +137,10 @@ public class WiredTextureGenerator : EditorWindow
         catch (Exception e)
         {
             Debug.LogWarningFormat("Error creating texture [{1}]: {0}", e.ToString(), path);
-            ok = false;
+            saved = false;
         }
 
-        return ok;
+        return saved;
     }
 
     /// <summary>

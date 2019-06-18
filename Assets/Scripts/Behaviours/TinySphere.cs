@@ -5,15 +5,18 @@ using UnityEngine;
 public class TinySphere : MonoBehaviour
 {
     #region Private Attributes
-    [SerializeField] private int index;
-    [SerializeField] private Vector3 vertex;
+    private int index;
+    public Vector3 originalPos;
+    public Vector3 currentPos;
+    Transform bigSphere;
+    Mesh bigSphereMesh;
     #endregion
 
     #region Properties
     public Vector3 Vertex
     {
-        get { return vertex; }
-        set { vertex = value; }
+        get { return originalPos; }
+        set { originalPos = value; }
     }
 
     public int Index
@@ -26,9 +29,20 @@ public class TinySphere : MonoBehaviour
 
     void Awake()
     {
+        Transform parent = transform.parent;
+        Transform fancySphere = parent.parent;
+        bigSphere = fancySphere.GetChild(0).GetChild(0);
+        bigSphereMesh = bigSphere.GetComponent<MeshFilter>().mesh;
+
+        currentPos = Vertex;
     }
 
     void Update()
     {
+        Vector3 offset = (currentPos - originalPos);
+        
+        float dist = offset.magnitude;
+
+        transform.position += transform.up * dist;
     }
 }

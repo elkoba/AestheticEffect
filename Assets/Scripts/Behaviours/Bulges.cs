@@ -1,29 +1,59 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Bulges : MonoBehaviour
 {
+    #region Typedefs
+
+    public struct Bulge
+    {
+        public Vector3 center;
+        public float duration;
+        public float timer;
+    }
+
+    #endregion
+
     #region Public Attributes
-    [Range(1.0f, 2.5f)]
-    public float maxBulgeMagnitude = 1.0f;
+
     [Range(1.0f, 3.0f)]
     public float maxAreaOfEffect = 1.0f;
-    [Range(0.25f, 0.75f)]
-    public float bulgeProbability = 0.25f;
     [Range(1.0f, 2.5f)]
     public float bulgeSpeed = 1.0f;
+
+    public float minTimeBetweenBulges = 0.5f;
+    public float maxTimeBetweenBulges = 1.0f;
+
+    public float minBulgeDuration = 1.5f;
+    public float maxBulgeDuration = 3.0f;
+
     #endregion
 
     #region Private Attributes
-    private static int _totalVertices;
-    private static int _tinySphereTotalPositions;
-    private static Vector3[] _mainSphereVerticesOriginalPositions;
-    private static Vector3[] _wireSphereVerticesOriginalPositions;
-    private static Vector3[] _tinySpheresOriginalPositions;
-    private static Vector3[] _normals;
+
+    private int _totalVertices;
+    private int _tinySphereTotalPositions;
+    private Vector3[] _mainSphereVerticesOriginalPositions;
+    private Vector3[] _wireSphereVerticesOriginalPositions;
+    private Vector3[] _tinySpheresOriginalPositions;
+    private Vector3[] _normals;
+    private Transform[] _tinySpheres;
     private Mesh _mainSphereMesh;
     private Mesh _wireSphereMesh;
+    private float sphereRadius = 10.0f;
+
+    private MeshFilter mainSphereMF;
+    private MeshFilter wireSphereMF;
+
+    private Vector3[] mainVerts;
+    private Vector3[] wireVerts;
+
+    private float timer = 0.0f;
+    private float timeNextBulge = 0.0f;
+    private List<Bulge> activeBulges = new List<Bulge>();
+
     #endregion
 
     #region Properties
@@ -38,99 +68,177 @@ public class Bulges : MonoBehaviour
         Transform wireSphere = transform.GetChild(1);
         Transform tinySpheres = transform.GetChild(2);
 
-        MeshFilter msmf = mainSphere.GetChild(0).GetComponent<MeshFilter>();
-        MeshFilter wsmf = wireSphere.GetChild(0).GetComponent<MeshFilter>();
+        mainSphereMF = mainSphere.GetChild(0).GetComponent<MeshFilter>();
+        wireSphereMF = wireSphere.GetChild(0).GetComponent<MeshFilter>();
 
-        _mainSphereMesh = msmf.mesh;
-        _wireSphereMesh = wsmf.mesh;
+        _mainSphereMesh = mainSphereMF.mesh;
+        _wireSphereMesh = wireSphereMF.mesh;
 
         int totalTinySpheres = tinySpheres.childCount;
 
         // Initialize the arrays and set their values
-        _totalVertices = msmf.mesh.vertices.Length;
+        _totalVertices = _mainSphereMesh.vertices.Length;
 
-        _mainSphereVerticesOriginalPositions = msmf.mesh.vertices;
-        _wireSphereVerticesOriginalPositions = wsmf.mesh.vertices;
-        _normals = msmf.mesh.normals;
+        // copy the arrays to be sure we don't keep referencing the arrays we're changing
+        _mainSphereVerticesOriginalPositions = new Vector3[_totalVertices];
+        _wireSphereVerticesOriginalPositions = new Vector3[_totalVertices];
+        _normals = new Vector3[_totalVertices];
+        Array.Copy(_mainSphereMesh.vertices, _mainSphereVerticesOriginalPositions, _totalVertices);
+        Array.Copy(_wireSphereMesh.vertices, _wireSphereVerticesOriginalPositions, _totalVertices);
+        Array.Copy(_mainSphereMesh.normals, _normals, _totalVertices);
 
-        _tinySphereTotalPositions = tinySpheres.childCount;
+        // get the radius from one of the vertices of the sphere (the first one for instance)
+        sphereRadius = _mainSphereVerticesOriginalPositions[0].magnitude;
+
+        // get the list of tiny spheres' centers
+        _tinySphereTotalPositions = totalTinySpheres;
         _tinySpheresOriginalPositions = new Vector3[totalTinySpheres];
+        _tinySpheres = new Transform[totalTinySpheres];
         for (int i = 0; i < totalTinySpheres; i++)
         {
-            _tinySpheresOriginalPositions[i] = tinySpheres.GetChild(i).transform.position;
+            _tinySpheres[i] = tinySpheres.GetChild(i);
+            _tinySpheresOriginalPositions[i] = _tinySpheres[i].position;
         }
+
+        // create the list of vertices we'll be modifying each tick
+        mainVerts = new Vector3[_totalVertices];
+        wireVerts = new Vector3[_totalVertices];
+        Array.Copy(_mainSphereVerticesOriginalPositions, mainVerts, _totalVertices);
+        Array.Copy(_wireSphereVerticesOriginalPositions, wireVerts, _totalVertices);
     }
 
     private void Update()
     {
-        bool bulge = MakeBulge();
+        float dt = Time.deltaTime;
+        timer += dt;
 
-        if (bulge)
+        // we may want to add bulges
+        if (timer >= timeNextBulge)
+            AddBulge();
+
+        // always start resetting the vertices to their original positions
+        Array.Copy(_mainSphereVerticesOriginalPositions, mainVerts, _totalVertices);
+        Array.Copy(_wireSphereVerticesOriginalPositions, wireVerts, _totalVertices);
+
+        // update the vertices according to the active bulges
+        for (int i = activeBulges.Count - 1; i >= 0; --i)
         {
-            int i = Random.Range(0, _totalVertices);
+            // update the bulge first
+            Bulge b = activeBulges[i];
+            UpdateBulge(dt, ref b);
 
-            Bulge(i);
+            // if it's over let's remove it from the list, otherwise update it (remember we have to do this because it's a struct instead of a class)
+            if (b.timer < b.duration)
+                activeBulges[i] = b;
+            else
+                activeBulges.RemoveAt(i);
         }
+
+        // finally update the mesh
+        _mainSphereMesh.vertices = mainVerts;
+        _wireSphereMesh.vertices = wireVerts;
+        mainSphereMF.mesh = _mainSphereMesh;
+        wireSphereMF.mesh = _wireSphereMesh;
     }
     #endregion
 
     #region Methods
+
     /// <summary>
-    /// This method handles the bulge behaviour
+    /// Updates the given bulge and adapts the vertices of the spheres according to its current position and time
     /// </summary>
-    /// <param name="index">
-    /// The index of the centre of the bulge, which will be the index of the vertex of our sphere meshes
-    /// </param>
-    private void Bulge(int index)
+    /// <param name="b"></param>
+    private void UpdateBulge(float dt, ref Bulge b)
     {
-        Vector3 mainSphereCentre = _mainSphereVerticesOriginalPositions[index];
-        Vector3 wireSphereCentre = _wireSphereVerticesOriginalPositions[index];
-        Vector3 direction = _normals[index];
-        float aoe = Random.Range(0.5f, maxAreaOfEffect);
-        
-        for (int i = 0; i < _totalVertices; i++)
+        // always update the time first
+        b.timer += dt;
+
+        // we can early quit if the bulge is over
+        if (b.timer >= b.duration)
+            return;
+
+        // calculate the intensity with the current time
+        float intensity = 0.0f;
+        if (b.timer < 0.5f * b.duration)
         {
-            float dist = DistToVertex(index, i);
+            // the bulge is growing
+            intensity = b.timer / (0.5f * b.duration);
+        }
+        else if (b.timer < b.duration)
+        {
+            // only update if it's not over
+            intensity = (b.duration - b.timer) / (0.5f * b.duration);
+        }
 
-            if (dist < aoe)
+        // now with the intensity we can calculate the area of effect
+        float areaOfEffect = intensity * maxAreaOfEffect;
+        float aoeSq = areaOfEffect * areaOfEffect;
+
+        // and with that we can update the vertices in the spheres
+        Vector3 dir = b.center.normalized;
+        for (int i = 0; i < _totalVertices; ++i)
+        {
+            Vector3 origV = _mainSphereVerticesOriginalPositions[i];
+            float distSq = (b.center - origV).sqrMagnitude;
+            if (distSq < aoeSq)
             {
-                float height = dist / aoe;
-                float dt = Time.deltaTime;
-                float y = 0.1f;
-                y += (-(height * height) + 1) * dt;
+                // we're close enough to be affected by the bulge
+                float dist = Mathf.Sqrt(distSq);
+                float t = Mathf.Clamp01(dist / areaOfEffect) * 0.5f * Mathf.PI;      //< normalize in the range [0..PI/2] because cos(0) = 1, cos(PI/2) = 0
+                float height = Mathf.Cos(t) * 0.5f * areaOfEffect;
 
-                while (y > 0.0f)
-                {
-                    _mainSphereMesh.vertices[i] += _normals[i] * bulgeSpeed * y;
-                }
+                // add that height to the vertex
+                // NOTE: [Barkley] Not sure if it's nicer with this line uncommented. The effect seems subtle so I left it commented out, but I think it looks slightly nicer with it uncommented
+                dir = origV.normalized;
+                mainVerts[i] += dir * height;
+                wireVerts[i] += dir * height;
             }
         }
-    }
 
-    private float DistToVertex(int centre, int checking)
-    {
-        Vector3 bulgeCentre = _mainSphereVerticesOriginalPositions[centre];
-        Vector3 checkingVertex = _wireSphereVerticesOriginalPositions[checking];
+        // I tried to adpat the code above but it doesn't work, balls don' come back to their original place, they stay still on the
+        // highest position of the bulge once they get there. I don't really understand why, tho
 
-        float dist = (checkingVertex - bulgeCentre).magnitude;
+        /*Transform parent = transform.parent;
+        Transform tinySpheres = transform.GetChild(2);
+        int totalMiniSpheres = tinySpheres.childCount;
+        for (int i = 0; i < totalMiniSpheres; i++)
+        {
+            Vector3 origS = tinySpheres.GetChild(i).transform.position;
+            float distSq = (b.center - origS).sqrMagnitude;
+            int vertIndex = tinySpheres.GetChild(i).GetComponent<TinySphere>().Index;
+            if (distSq < aoeSq)
+            {
+                // we're close enough to be affected by the bulge
+                float dist = Mathf.Sqrt(distSq);
+                float t = Mathf.Clamp01(dist / areaOfEffect) * 0.5f * Mathf.PI;      //< normalize in the range [0..PI/2] because cos(0) = 1, cos(PI/2) = 0
+                float height = Mathf.Cos(t) * 0.5f * areaOfEffect;
 
-        return dist;
+                // add that height to the vertex
+                // NOTE: [Barkley] Not sure if it's nicer with this line uncommented. The effect seems subtle so I left it commented out, but I think it looks slightly nicer with it uncommented
+                dir = origS.normalized;
+                tinySpheres.GetChild(i).transform.position += dir * height;
+            }
+        }*/
     }
 
     /// <summary>
-    /// This method handles the chances of making a bulge
+    /// Adds a new bulge, with random values for the center, the duration and (maybe) other stuff, to the list
     /// </summary>
-    /// <returns>
-    /// Returns if there will be a bulge or not
-    /// </returns>
-    private bool MakeBulge()
+    private void AddBulge()
     {
-        float p = Random.Range(0.0f, 1.0f);
+        // create the new bulge
+        Bulge b = new Bulge();
+        b.center = UnityEngine.Random.onUnitSphere * sphereRadius;
+        b.duration = UnityEngine.Random.Range(minBulgeDuration, maxBulgeDuration);
+        b.timer = 0.0f;
 
-        if (p < bulgeProbability)
-            return true;
-        else
-            return false;
+        // add it to the list
+        activeBulges.Add(b);
+
+        // calculate the time for the new bulge
+        float interval = UnityEngine.Random.Range(minTimeBetweenBulges, maxTimeBetweenBulges);
+        timeNextBulge += interval;
     }
+
     #endregion
 }
