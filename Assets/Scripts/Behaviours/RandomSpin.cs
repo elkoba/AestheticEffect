@@ -6,7 +6,7 @@ public class RandomSpin : MonoBehaviour
 {
     #region Attributes
     Vector3 currentAxis;
-    private float angleSpeed = 60.0f;
+    private float angleSpeed = 30.0f;
     private float current = 0.0f;
     private float period = 20.0f;
     #endregion

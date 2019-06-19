@@ -10,6 +10,7 @@ public class Bulges : MonoBehaviour
     public struct Bulge
     {
         public Vector3 center;
+        public float aoe;
         public float duration;
         public float timer;
     }
@@ -18,7 +19,9 @@ public class Bulges : MonoBehaviour
 
     #region Public Attributes
 
-    [Range(1.0f, 3.0f)]
+    [Range(0.5f, 1.0f)]
+    public float minAreaOfEffect = 0.5f;
+    [Range(1.5f, 3.0f)]
     public float maxAreaOfEffect = 1.0f;
     [Range(1.0f, 2.5f)]
     public float bulgeSpeed = 1.0f;
@@ -35,6 +38,7 @@ public class Bulges : MonoBehaviour
 
     private int _totalVertices;
     private int _tinySphereTotalPositions;
+    private int _totalTinySpheres;
     private Vector3[] _mainSphereVerticesOriginalPositions;
     private Vector3[] _wireSphereVerticesOriginalPositions;
     private Vector3[] _tinySpheresOriginalPositions;
@@ -49,6 +53,7 @@ public class Bulges : MonoBehaviour
 
     private Vector3[] mainVerts;
     private Vector3[] wireVerts;
+    private Vector3[] tsPositions;
 
     private float timer = 0.0f;
     private float timeNextBulge = 0.0f;
@@ -74,7 +79,7 @@ public class Bulges : MonoBehaviour
         _mainSphereMesh = mainSphereMF.mesh;
         _wireSphereMesh = wireSphereMF.mesh;
 
-        int totalTinySpheres = tinySpheres.childCount;
+        _totalTinySpheres = tinySpheres.childCount;
 
         // Initialize the arrays and set their values
         _totalVertices = _mainSphereMesh.vertices.Length;
@@ -91,20 +96,22 @@ public class Bulges : MonoBehaviour
         sphereRadius = _mainSphereVerticesOriginalPositions[0].magnitude;
 
         // get the list of tiny spheres' centers
-        _tinySphereTotalPositions = totalTinySpheres;
-        _tinySpheresOriginalPositions = new Vector3[totalTinySpheres];
-        _tinySpheres = new Transform[totalTinySpheres];
-        for (int i = 0; i < totalTinySpheres; i++)
+        _tinySphereTotalPositions = _totalTinySpheres;
+        _tinySpheresOriginalPositions = new Vector3[_totalTinySpheres];
+        _tinySpheres = new Transform[_totalTinySpheres];
+        for (int i = 0; i < _totalTinySpheres; i++)
         {
             _tinySpheres[i] = tinySpheres.GetChild(i);
-            _tinySpheresOriginalPositions[i] = _tinySpheres[i].position;
+            _tinySpheresOriginalPositions[i] = _tinySpheres[i].localPosition;
         }
 
         // create the list of vertices we'll be modifying each tick
         mainVerts = new Vector3[_totalVertices];
         wireVerts = new Vector3[_totalVertices];
+        tsPositions = new Vector3[_totalTinySpheres];
         Array.Copy(_mainSphereVerticesOriginalPositions, mainVerts, _totalVertices);
         Array.Copy(_wireSphereVerticesOriginalPositions, wireVerts, _totalVertices);
+        Array.Copy(_tinySpheresOriginalPositions, tsPositions, _totalTinySpheres);
     }
 
     private void Update()
@@ -119,6 +126,7 @@ public class Bulges : MonoBehaviour
         // always start resetting the vertices to their original positions
         Array.Copy(_mainSphereVerticesOriginalPositions, mainVerts, _totalVertices);
         Array.Copy(_wireSphereVerticesOriginalPositions, wireVerts, _totalVertices);
+        Array.Copy(_tinySpheresOriginalPositions, tsPositions, _totalTinySpheres);
 
         // update the vertices according to the active bulges
         for (int i = activeBulges.Count - 1; i >= 0; --i)
@@ -137,6 +145,10 @@ public class Bulges : MonoBehaviour
         // finally update the mesh
         _mainSphereMesh.vertices = mainVerts;
         _wireSphereMesh.vertices = wireVerts;
+        for (int i = 0; i < _totalTinySpheres; i++)
+        {
+            _tinySpheres[i].localPosition = tsPositions[i];
+        }
         mainSphereMF.mesh = _mainSphereMesh;
         wireSphereMF.mesh = _wireSphereMesh;
     }
@@ -171,7 +183,7 @@ public class Bulges : MonoBehaviour
         }
 
         // now with the intensity we can calculate the area of effect
-        float areaOfEffect = intensity * maxAreaOfEffect;
+        float areaOfEffect = intensity * b.aoe;
         float aoeSq = areaOfEffect * areaOfEffect;
 
         // and with that we can update the vertices in the spheres
@@ -198,12 +210,12 @@ public class Bulges : MonoBehaviour
         // I tried to adpat the code above but it doesn't work, balls don' come back to their original place, they stay still on the
         // highest position of the bulge once they get there. I don't really understand why, tho
 
-        /*Transform parent = transform.parent;
+        Transform parent = transform.parent;
         Transform tinySpheres = transform.GetChild(2);
         int totalMiniSpheres = tinySpheres.childCount;
         for (int i = 0; i < totalMiniSpheres; i++)
         {
-            Vector3 origS = tinySpheres.GetChild(i).transform.position;
+            Vector3 origS = tinySpheres.GetChild(i).transform.localPosition;
             float distSq = (b.center - origS).sqrMagnitude;
             int vertIndex = tinySpheres.GetChild(i).GetComponent<TinySphere>().Index;
             if (distSq < aoeSq)
@@ -216,9 +228,9 @@ public class Bulges : MonoBehaviour
                 // add that height to the vertex
                 // NOTE: [Barkley] Not sure if it's nicer with this line uncommented. The effect seems subtle so I left it commented out, but I think it looks slightly nicer with it uncommented
                 dir = origS.normalized;
-                tinySpheres.GetChild(i).transform.position += dir * height;
+                tsPositions[i] += dir * height;
             }
-        }*/
+        }
     }
 
     /// <summary>
@@ -231,6 +243,7 @@ public class Bulges : MonoBehaviour
         b.center = UnityEngine.Random.onUnitSphere * sphereRadius;
         b.duration = UnityEngine.Random.Range(minBulgeDuration, maxBulgeDuration);
         b.timer = 0.0f;
+        b.aoe = UnityEngine.Random.Range(minAreaOfEffect, maxAreaOfEffect);
 
         // add it to the list
         activeBulges.Add(b);
